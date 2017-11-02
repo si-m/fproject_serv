@@ -1,0 +1,15 @@
+syntax = "proto3";
+// The greeting service definition.
+service Api {
+	//Sends an array
+  rpc Predict (PredictRequest) returns (PredictReply) {}
+}
+
+// The request message containing the one or more tweets to predict
+message PredictRequest {
+  repeated string tweets = 1;
+}
+
+message PredictReply {
+  repeated float predictions = 1 [packed=true];
+}

@@ -8,30 +8,50 @@ import tensorflow as tf
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2
 from utils import TweetMapper
+import grpc
+from concurrent import futures
+import time
 
-import tensorflow as tf
+import api_pb2
+import api_pb2_grpc
 
-tf.app.flags.DEFINE_string('server', 'localhost:9000',
-                           'PredictionService host:port')
-
-FLAGS = tf.app.flags.FLAGS
+_ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 
-def main(_):
-  host, port = FLAGS.server.split(':')
-  channel = implementations.insecure_channel(host, int(port))
+tweet_mapper = TweetMapper()
+
+class Api(api_pb2_grpc.ApiServicer):
+
+  def Predict(self, request, context):
+    response = evaluate(request.tweets)
+    return api_pb2.PredictReply(predictions=response.outputs['scores'].float_val)
+
+def evaluate(tweets):
+
+  channel = implementations.insecure_channel('localhost', int(9000))
   stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
-  tweet_mapper = TweetMapper()
-  # Send request
-  data = tweet_mapper.vectorize(["Hoy fue un dia de mierda","Me encanta jugar en el parque"])
+
+  vec_data = tweet_mapper.vectorize(tweets)
+    
   # See prediction_service.proto for gRPC request/response details.
   request = predict_pb2.PredictRequest()
   request.model_spec.name = 'sim'
   request.inputs['tweets'].CopyFrom(
-      tf.contrib.util.make_tensor_proto(data))
+      tf.contrib.util.make_tensor_proto(vec_data))
   result = stub.Predict(request, 10.0)  # 10 secs timeout
-  print(result)
+  return result
 
+def serve():
+  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+  api_pb2_grpc.add_ApiServicer_to_server(Api(), server)
+  server.add_insecure_port('[::]:50051')
+  server.start()
+  try:
+    while True:
+      time.sleep(_ONE_DAY_IN_SECONDS)
+  except KeyboardInterrupt:
+    server.stop(0)
 
 if __name__ == '__main__':
-  tf.app.run()
+  serve()
+  

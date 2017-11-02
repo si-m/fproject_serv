@@ -12,10 +12,6 @@ class TweetMapper:
 	def vectorize(self, raw_tweets):
 		tweets = []
 		regex = re.compile('[%s]' % re.escape('!"$%&\'()*+,-./:;<=>?¿[\\]^_`{|}~'))
-		#check if it is a string or a list of strings
-		if not isinstance(raw_tweets, list):
-			raw_tweets = [raw_tweets]
-
 		#Cleaning tweets
 		for tweet in raw_tweets:
 			#remove url
