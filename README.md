@@ -1,5 +1,5 @@
 # GRPC API
-This is the code for the grpc api to function as a microservice between the tensorflow serving api and the node web server
+This is the grpc api microservice
 ## Overview
 
 ## Dependencies
