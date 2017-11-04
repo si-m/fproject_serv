@@ -1,4 +1,3 @@
-
 from __future__ import print_function
 
 # Communication to TensorFlow server via gRPC
@@ -7,16 +6,20 @@ import tensorflow as tf
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2
+# gRPC custom api definitions
+import api_pb2
+import api_pb2_grpc
+
 from utils import TweetMapper
 import grpc
 from concurrent import futures
 import time
 
-import api_pb2
-import api_pb2_grpc
-
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-
+TENSORFLOW_SERVING_HOST = 'localhost'
+TENSORFLOW_SERVING_PORT = 9000
+SERVER_HOST = ''
+SERVER_PORT = 50051
 
 tweet_mapper = TweetMapper()
 
