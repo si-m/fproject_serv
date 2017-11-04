@@ -12,7 +12,7 @@ It's a little bit tricky and i recomend to use this tutorials:
 
 - [How to deploy Machine Learning models with TensorFlow by Vitaly Bezgachev](https://medium.com/towards-data-science/how-to-deploy-machine-learning-models-with-tensorflow-part-2-containerize-it-db0ad7ca35a7)
 
-# GRPC API
+# gRPC Api
 Now that we have our tensorflow model handle by the TF Api we have to make a client to talk to it.
 
 ## Dependencies
