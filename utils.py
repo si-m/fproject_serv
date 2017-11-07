@@ -1,13 +1,17 @@
 from nltk.tokenize import TweetTokenizer
 import gensim
 import numpy as np
-import re
+import re, random
 
 class TweetMapper:
 	MAX_NB_WORDS=20
 	def __init__(self):
 		self.model = gensim.models.KeyedVectors.load_word2vec_format('SBW-vectors-300-min5.bin', binary=True)
 		self.tknzr = TweetTokenizer()
+
+	def name(self):
+		names = ['Juan','Pedro','Luis','Adrián','Carlos','Cristina','Marta','Sara','María','Lucía','Paula','Laura','Roberto','Miguel','Sandra','Ana']
+		return random.choice(names)
 
 	def vectorize(self, raw_tweets):
 		tweets = []
@@ -44,7 +48,7 @@ class TweetMapper:
 				else:
 					#if it is a mention vectorize a name, for example @michael123 -> would be Carlos
 					if word[0] == '@':
-						tweets_tensor[i][f] = self.model.wv[name()]
+						tweets_tensor[i][f] = self.model.wv[self.name()]
 					#if not append the unknown token
 					else:
 						tweets_tensor[i][f] = self.model.wv['unk']
