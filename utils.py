@@ -15,19 +15,22 @@ class TweetMapper:
 
 	def vectorize(self, raw_tweets):
 		tweets = []
-		regex = re.compile('[%s]' % re.escape('!"$%&\'()*+,-./:;<=>?¿[\\]^_`{|}~'))
+		regex = re.compile('[%s]' % re.escape('1234567890!¡"$%&\'()*+,-./:;<=>?¿[\\]^_`{|}~'))
 		#Cleaning tweets
 		for tweet in raw_tweets:
-			#remove url
-			no_url = re.sub(r"https?\S+", "", tweet)
-			#no punctuation
-			no_pun = regex.sub('', no_url)
-			#tokenize
+
+			lower_tweet = tweet.lower()
+
+			no_url = re.sub(r"\S*(\.com|\.ly|\.co|\.net|\.org|\.me|\.gl)\S*", "", lower_tweet)
+			jaja = re.sub(r'\w*(jaja|kaka|jeje|jiji|juju|jojo|ajaj|jaaj)\w*','jaja',no_url)
+			repeat = re.sub(r'([a-z])\1{2,}',r'\1', jaja)
+			no_pun = regex.sub('', repeat)
+			#tokenizing
 			tokenized = self.tknzr.tokenize(no_pun)
 			#regenerate tweet
 			important_words=[]
 			for word in tokenized:
-				if not word[0].startswith('#'):
+				if not word.startswith('#'):
 					important_words.append(word)
 					
 			tweets.append(important_words)
@@ -47,7 +50,7 @@ class TweetMapper:
 					tweets_tensor[i][f] = self.model.wv[word]
 				else:
 					#if it is a mention vectorize a name, for example @michael123 -> would be Carlos
-					if word[0] == '@':
+					if word.startswith('@'):
 						tweets_tensor[i][f] = self.model.wv[self.name()]
 					#if not append the unknown token
 					else:
