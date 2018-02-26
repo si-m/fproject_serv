@@ -44,4 +44,13 @@ $ python api.py
 ```
 
 
+## Full System Arquitecture
+![System](https://i.imgur.com/APqa7i0.png)
 
+## NODE SERVER
+* https://github.com/si-m/fproject_node
+
+
+## FRONT-END REACT APP
+
+* https://github.com/si-m/fproject_front
